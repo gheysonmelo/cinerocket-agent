@@ -114,7 +114,7 @@ class CineDataAgent:
         for _ in range(self.settings.max_tool_iterations):
             message, model_used = self._complete(messages)
             if not message.tool_calls:
-                answer = (message.content or "").strip() or "Não consegui gerar uma resposta."
+                answer = message.content.strip()
                 break
 
             messages.append(message.model_dump(exclude_none=True))
@@ -147,7 +147,11 @@ class CineDataAgent:
                 )
                 if not resp.choices:
                     raise ValueError(getattr(resp, "error", None) or "resposta vazia")
-                return resp.choices[0].message, model
+                message = resp.choices[0].message
+                # Alguns modelos gratuitos devolvem 200 sem texto nem tool call.
+                if not message.tool_calls and not (message.content or "").strip():
+                    raise ValueError("resposta vazia")
+                return message, model
             except APIStatusError as exc:
                 if exc.status_code == 429 and "per-day" in str(exc).lower():
                     raise QuotaExceededError(
