@@ -19,6 +19,9 @@ BUSINESS_RULES = """
   Para análises de lucro/receita filtre SEMPRE `receita_brl IS NOT NULL` (e
   `orcamento_brl IS NOT NULL AND orcamento_brl > 0` quando o orçamento importar).
 - Margem de lucro (%) = lucro_brl * 100.0 / receita_brl, apenas com receita_brl > 0 e orcamento_brl > 0.
+- Há receitas/orçamentos irrisórios por erro de cadastro (ex.: receita de R$ 3,09), que geram
+  margens de -1.000.000%. Em análises de MARGEM, considere só receita_brl >= 10000 e
+  orcamento_brl >= 10000, e avise esse critério na resposta.
 - popularidade: índice de popularidade do TMDB (maior = mais popular).
 - nota_tmdb / nota_imdb: escala 0-10; qtd_tmdb / qtd_imdb: nº de votos. Ignore NULLs.
 - dim_reviews.nota_media_usuarios (0-10) e qtd_avaliacoes_usuarios: avaliações dos usuários da CineData.
