@@ -76,7 +76,14 @@ class CineDataAgent:
         self.db = Database(
             self.settings.db_path, self.settings.max_rows, self.settings.query_timeout_s
         )
-        self.client = OpenAI(base_url=self.settings.base_url, api_key=self.settings.api_key)
+        # Sem retries automáticos do SDK: requisições que falham também contam na cota
+        # diária, e quem trata a falha é o fallback para o próximo modelo.
+        self.client = OpenAI(
+            base_url=self.settings.base_url,
+            api_key=self.settings.api_key,
+            timeout=self.settings.llm_timeout_s,
+            max_retries=0,
+        )
         self.system_prompt = build_system_prompt(self.db.schema_ddl())
         self.history: list[dict] = []
         self.use_cache = use_cache

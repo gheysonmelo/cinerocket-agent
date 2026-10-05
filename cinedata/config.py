@@ -38,6 +38,7 @@ class Settings:
     db_path: Path = field(default_factory=_resolve_db_path)
     max_rows: int = 50                # linhas devolvidas ao LLM por consulta
     query_timeout_s: float = 20.0     # aborta consultas muito pesadas
+    llm_timeout_s: float = 90.0       # passa para o próximo modelo se o atual travar
     max_tool_iterations: int = 6      # evita loops infinitos (e economiza cota)
     memory_turns: int = 6             # pares pergunta/resposta mantidos no histórico
     cache_dir: Path = PROJECT_ROOT / ".cache"
